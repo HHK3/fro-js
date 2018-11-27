@@ -33,6 +33,7 @@ function init() {
   main.addContenItem("Variabelen", variables);
   main.addContenItem("Object", object);
   main.addContenItem("Array", array);
+  main.addContenItem("AJAX - Tabel", tabel);
 
   // Activate the first navigation link
   intro();
@@ -318,6 +319,200 @@ function array() {
     "</tr>" +
     "</table>";
   main.updateContent("Array", description);
+
+  // Set link to the element in the DOM
+  var element = document.getElementById("contentPlaceholder");
+
+  // Create the image and set some properties
+  var img = document.createElement("img");
+  img.src = "photo.jpg";
+  img.style.width = "100px";
+
+  // Create the label
+  var label = document.createElement("label");
+  label.classList.add("studentName");
+  label.innerHTML = studentName;
+
+  // Create the paragraph and add the image and label to it
+  var p = document.createElement("p");
+  p.appendChild(img);
+  p.appendChild(document.createElement("br"));
+  p.appendChild(label);
+
+  // Add the paragraph to the DOM
+  element.appendChild(p);
+}
+
+//AJAX - Tabel
+function tabel() {
+  var url = "http://gert-rikkers.nl/api/meterstanden";
+  var description = "<h4>Overzicht van de metingen voor postcode 1234AB</h4>";
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.open("GET", url, true);
+  console.log(url);
+
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      var dataJSON = xhttp.responseText;
+
+      var dataJSON2 = JSON.parse(xhttp.responseText);
+      console.log(dataJSON2);
+
+      description +=
+        "<br>" +
+        //Table
+        "<table>" +
+        "<tr>" +
+        "<th>postcode</th>" +
+        "<th>huisnummer</th>" +
+        "<th>datum</th>" +
+        "<th>gas</th>" +
+        "<th>water</th>" +
+        "<th>slimmeMeter</th>" +
+        "<th>elektriciteitHoog</th>" +
+        "<th>elektriciteitLaag</th>" +
+        "<th>maand</th>" +
+        "<th>gasVerbruik</th>" +
+        "</td>" +
+        "</tr>";
+
+      for (var i = 0; i < dataJSON2.length; i++) {
+        var result1 = {
+          postcode: dataJSON2[i].postcode,
+          huisnummer: dataJSON2[i].huisnummer,
+          datum: dataJSON2[i].datum,
+          gas: dataJSON2[i].gas,
+          gasVolgende: function() {
+            for (var j = 0; j < result1.gas; j++) {
+              return dataJSON2[j].gas;
+            }
+          },
+          water: dataJSON2[i].water,
+          slimmeMeter: dataJSON2[i].slimmeMeter,
+          elektriciteit: [
+            dataJSON2[i].elektriciteit[0],
+            dataJSON2[i].elektriciteit[1]
+          ],
+          maand: function() {
+            var months = [
+              "Jan",
+              "Feb",
+              "Mar",
+              "Apr",
+              "Mei",
+              "Jun",
+              "Jul",
+              "Aug",
+              "Sep",
+              "Okt",
+              "Nov",
+              "Dec"
+            ];
+            var datumm = new Date(dataJSON2[i].datum);
+            return months[datumm.getMonth()];
+          },
+          gasVerbruik: function() {
+            switch (dataJSON2[i].gas) {
+              case dataJSON2[0].gas:
+                return dataJSON2[1].gas - dataJSON2[0].gas;
+                break;
+              case dataJSON2[1].gas:
+                return dataJSON2[2].gas - dataJSON2[1].gas;
+                break;
+              case dataJSON2[2].gas:
+                return dataJSON2[3].gas - dataJSON2[2].gas;
+                break;
+              case dataJSON2[3].gas:
+                return dataJSON2[4].gas - dataJSON2[3].gas;
+                break;
+              case dataJSON2[4].gas:
+                return dataJSON2[5].gas - dataJSON2[4].gas;
+                break;
+              case dataJSON2[5].gas:
+                return dataJSON2[6].gas - dataJSON2[5].gas;
+                break;
+              case dataJSON2[6].gas:
+                return dataJSON2[7].gas - dataJSON2[6].gas;
+                break;
+              case dataJSON2[7].gas:
+                return dataJSON2[8].gas - dataJSON2[7].gas;
+                break;
+              case dataJSON2[8].gas:
+                return dataJSON2[9].gas - dataJSON2[8].gas;
+                break;
+              case dataJSON2[9].gas:
+                return dataJSON2[10].gas - dataJSON2[9].gas;
+                break;
+              case dataJSON2[10].gas:
+                return dataJSON2[11].gas - dataJSON2[10].gas;
+                break;
+              case dataJSON2[11].gas:
+                return dataJSON2[12].gas - dataJSON2[11].gas;
+                break;
+              default:
+                return "-";
+            }
+          }
+        };
+
+        description +=
+          "<tr>" +
+          "<td>" +
+          result1.postcode +
+          "</td>" +
+          "<td>" +
+          result1.huisnummer +
+          "</td>" +
+          "<td>" +
+          result1.datum +
+          "</td>" +
+          "<td>" +
+          result1.gas +
+          "</td>" +
+          "<td>" +
+          result1.water +
+          "</td>" +
+          "<td>";
+
+        if (result1.slimmeMeter == true) {
+          description += "+";
+        } else {
+          description += "";
+        }
+
+        description +=
+          "</td>" +
+          "<td>" +
+          result1.elektriciteit[0] +
+          "</td>" +
+          "<td>" +
+          result1.elektriciteit[1] +
+          "</td>" +
+          "<td>" +
+          result1.maand() +
+          "</td>" +
+          "<td>" +
+          result1.gasVerbruik() +
+          "</td>" +
+          "</tr>";
+      }
+
+      description += "</table>";
+
+      // description += "<h4>Mooi lijstje</h4>";
+      // description += "<ul>";
+
+      // for (var i = 0; i < dataJSON2.people.length; i++) {
+      //   result += "<li>" + dataJSON2.people[i].name + "</li>";
+      // }
+
+      // updateContent("Opdracht 14 - Publieke WebAPI gebruiken", description);
+      main.updateContent("AJAX - Tabel", description);
+    }
+  };
+
+  xhttp.send();
 
   // Set link to the element in the DOM
   var element = document.getElementById("contentPlaceholder");
